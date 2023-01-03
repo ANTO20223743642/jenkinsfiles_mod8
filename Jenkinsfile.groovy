@@ -5,14 +5,14 @@ pipeline {
     stages {
         stage('Clone QA env') {
             steps {
-                git '<put here your repository url>'
+                git 'https://github.com/ANTO20223743642/jenkinsfiles_mod8.git'
             }            
         }
         stage('Change frontend ip'){
             steps{
                 dir('client'){
                     sh "cat src/components/Books.vue | grep 'http://'"
-                    sh "sed -i 's/localhost/${qa_server_ip}/g' src/components/Books.vue"
+                    sh "sed -i 's/192.168.1.67/${qa_server_ip}/g' src/components/Books.vue"
                     sh "cat src/components/Books.vue | grep 'http://'"
                 }
             }
@@ -24,7 +24,7 @@ pipeline {
                     sh "docker build -t frontend:1.0 ."
 
                     //Changing IP for PROD env. 
-                    sh "sed -i 's/localhost/${prod_server_ip}/g' src/components/Books.vue"
+                    sh "sed -i 's/192.168.1.67/${prod_server_ip}/g' src/components/Books.vue"
                     sh "cat src/components/Books.vue | grep 'http://'"
                     sh "docker build -t frontend:1.0-prod ."
 
@@ -37,7 +37,7 @@ pipeline {
         }
         stage('Deploy QA environment'){
             steps{
-                git '<put here your repository url>'
+                git 'https://github.com/ANTO20223743642/jenkinsfiles_mod8.git'
                 sh "docker compose down"
                 sh "docker compose up -d"
                 sh "docker compose ps"
@@ -56,7 +56,7 @@ pipeline {
         stage ('Deploy PROD environment'){
             agent{label 'prod'}
             steps{
-                git '<put here your repository url>'
+                git 'https://github.com/ANTO20223743642/jenkinsfiles_mod8.git'
                 unstash 'backend_image'
                 unstash 'frontend_image-prod'
                 sh "docker compose -f docker-compose-prod.yml down"
